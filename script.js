@@ -1,31 +1,13 @@
+//! CONFIG
+
+const uploadUrl = ""; //? default upload url
+const uploadField = ""; //? default upload field
 
 //! CONFIG
 
-const uploadUrl = "https://img.eightbornv.com/uploadxxx.php";
-
-// let three = document.createElement("script");
-// document.body.append(three);
-// three.outerHTML = `<script type="module" src="nui://utk_render/three.module.js"></script>`;
-
-//! CONFIG
-
-import {
-    OrthographicCamera,
-    Scene,
-    WebGLRenderTarget,
-    LinearFilter,
-    NearestFilter,
-    RGBAFormat,
-    UnsignedByteType,
-    CfxTexture,
-    ShaderMaterial,
-    PlaneBufferGeometry,
-    Mesh,
-    WebGLRenderer
-} from "/module/Three.js";
+import {OrthographicCamera, Scene, WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat, UnsignedByteType, CfxTexture, ShaderMaterial, PlaneBufferGeometry, Mesh, WebGLRenderer} from "/module/Three.js";
 
 var isAnimated = false;
-var canvas;
 var MainRender;
 var scId = 0;
 
@@ -54,12 +36,10 @@ class GameRender {
         cameraRTT.position.z = 0;
         const width = Math.floor(window.innerHeight * 10 / 23);
         cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth / 3.5, 0, width, window.innerHeight);
-        
-        //cameraRTT.zoom = 0.1;
 
         const sceneRTT = new Scene();
 
-        const rtTexture = new WebGLRenderTarget(window.innerWidth, window.innerHeight, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, type: UnsignedByteType});
+        const rtTexture = new WebGLRenderTarget(window.innerWidth, window.innerHeight, {minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, type: UnsignedByteType});
         const gameTexture = new CfxTexture();
         gameTexture.needsUpdate = true;
 
@@ -69,8 +49,8 @@ class GameRender {
 			varying vec2 vUv;
 
 			void main() {
-				vUv = vec2(uv.x, 1.0-uv.y); // fuck gl uv coords
-				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+				vUv = vec2(uv.x, 1.0-uv.y);
+				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 			}
 `,
             fragmentShader: `
@@ -78,7 +58,7 @@ class GameRender {
 			uniform sampler2D tDiffuse;
 
 			void main() {
-				gl_FragColor = texture2D( tDiffuse, vUv );
+				gl_FragColor = texture2D(tDiffuse, vUv);
 			}
 `
         });
@@ -91,7 +71,6 @@ class GameRender {
         sceneRTT.add(quad);
 
         const renderer = new WebGLRenderer();
-        //renderer.setPixelRatio(1.7);
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.autoClear = false;
 
@@ -120,7 +99,6 @@ class GameRender {
         const width = Math.floor(window.innerHeight * 10 / 23);
         cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth / 3.5, 0, width, window.innerHeight);
         cameraRTT.zoom = 0.1;
-        //cameraRTT.position.z = 0;
 
         this.cameraRTT = cameraRTT;
 
@@ -168,7 +146,9 @@ class GameRender {
         isAnimated = true;
     }
 
-    requestScreenshot = () => new Promise((res) => {
+    requestScreenshot = (url, field) => new Promise((res) => {
+        url = url ? url : uploadUrl;
+        field = field ? field : uploadField;
         let wasInAnim = isAnimated;
         if (!isAnimated) isAnimated = true;
         if (!this.canvas) this.createTempCanvas();
@@ -176,14 +156,14 @@ class GameRender {
         const imageURL = this.canvas.toDataURL("image/png", 1.0);
         const getFormData = () => {
             const formData = new FormData();
-            formData.append("files[]", dataURItoBlob(imageURL), `screenshot.png`);
+            formData.append(field, dataURItoBlob(imageURL), `screenshot.png`);
     
             return formData;
         };
-        fetch(uploadUrl, {
+        fetch(url, {
             method: 'POST',
             mode: 'cors',
-            body: ("files[]") ? getFormData() : JSON.stringify({
+            body: (field) ? getFormData() : JSON.stringify({
                 data: imageURL,
                 id: scId
             })
@@ -206,17 +186,6 @@ class GameRender {
         }
     }
 }
-
-// window.addEventListener("message", async (event) => {
-//     if (event.data.msg == "render") {
-//         MainRender.renderToTarget(document.getElementById("render-canvas"));
-//     } else if (event.data.msg == "stop") {
-//         MainRender.stop();
-//     } else if (event.data.msg == "screenshot") {
-//         let url = await MainRender.requestScreenshot();
-//         console.log("url", url);
-//     }
-// })
 
 setTimeout(() => {
     MainRender = new GameRender();
