@@ -30,11 +30,5 @@ files {
     "module/renderers/*.js",
     "module/scenes/*.js",
     "module/textures/*.js",
-
-    --"test.html",
     "script.js"
 }
-
--- client_script "client.lua"
-
--- ui_page "test.html"
