@@ -26,16 +26,16 @@ Takes a screenshot and uploads it to the defined url
 
     ```js
     async function takeScreenshot() {
-        let url = await MainRender.requestScreenshot("www.exampleupload.com", "files[]");
-        console.log("url", url);
+        let resp = await MainRender.requestScreenshot("www.exampleupload.com", "files[]");
+        console.log("resp", resp);
     }
     ```
 
 - Normal method:
 
     ```js
-    MainRender.requestScreenshot("www.exampleupload.com", "files[]").then((url) => {
-        console.log("url", url);
+    MainRender.requestScreenshot("www.exampleupload.com", "files[]").then((resp) => {
+        console.log("resp", resp);
     })
     ```
 
