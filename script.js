@@ -34,8 +34,7 @@ class GameRender {
 
         const cameraRTT = new OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, -10000, 10000);
         cameraRTT.position.z = 0;
-        const width = Math.floor(window.innerHeight * 10 / 23);
-        cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth / 3.5, 0, width, window.innerHeight);
+        cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, 0, 0, window.innerWidth, window.innerHeight);
 
         const sceneRTT = new Scene();
 
@@ -93,12 +92,14 @@ class GameRender {
         requestAnimationFrame(this.animate);
     }
 
-    resize() {
+    resize(screenshot) {
         const cameraRTT = new OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, -10000, 10000);
-        cameraRTT.position.z = 100;
-        const width = Math.floor(window.innerHeight * 10 / 23);
-        cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth / 3.5, 0, width, window.innerHeight);
-        cameraRTT.zoom = 0.1;
+        if (screenshot === true) {
+            cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, 0, 0, window.innerWidth, window.innerHeight);
+        } else {
+            const width = Math.floor(window.innerHeight * 10 / 23);
+            cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth / 3.8, 0, width, window.innerHeight);
+        }
 
         this.cameraRTT = cameraRTT;
 
@@ -123,14 +124,15 @@ class GameRender {
             this.renderer.render(this.sceneRTT, this.cameraRTT, this.rtTexture, true);
             const read = new Uint8Array(window.innerWidth * window.innerHeight * 4);
             this.renderer.readRenderTargetPixels(this.rtTexture, 0, 0, window.innerWidth, window.innerHeight, read);
-            this.canvas.style.display = 'inline';
+
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
 
             const d = new Uint8ClampedArray(read.buffer);
 
             const cxt = this.canvas.getContext('2d');
-            cxt.putImageData(new ImageData(d, window.innerWidth, window.innerHeight), 0, 0);
+            const imageData = new ImageData(d, window.innerWidth, window.innerHeight);
+            cxt.putImageData(imageData, 0, 0);
         }
     }
 
@@ -142,39 +144,41 @@ class GameRender {
     }
 
     renderToTarget(element) {
+        this.resize(false);
         this.canvas = element;
         isAnimated = true;
     }
 
     requestScreenshot = (url, field) => new Promise((res) => {
+        console.time("requestScreenshot");
+        this.createTempCanvas();
         url = url ? url : uploadUrl;
         field = field ? field : uploadField;
-        let wasInAnim = isAnimated;
-        if (!isAnimated) isAnimated = true;
-        if (!this.canvas) this.createTempCanvas();
+        isAnimated = true;
+        await Delay(10);
+        const imageURL = this.canvas.toDataURL("image/jpeg", 0.92);
+        const formData = new FormData();
+        formData.append(field, dataURItoBlob(imageURL), `screenshot.png`);
 
-        const imageURL = this.canvas.toDataURL("image/png", 1.0);
-        const getFormData = () => {
-            const formData = new FormData();
-            formData.append(field, dataURItoBlob(imageURL), `screenshot.png`);
-    
-            return formData;
-        };
         fetch(url, {
             method: 'POST',
             mode: 'cors',
-            body: (field) ? getFormData() : JSON.stringify({
-                data: imageURL,
-                id: scId
-            })
+            body: formData
         })
         .then(response => response.text())
         .then(text => {
-            res(text);
+            text = JSON.parse(text);
+            if (text.success) {
+                console.timeEnd("requestScreenshot");
+                res(text.files[0]);
+            } else {
+                res(false);
+            }
+            scId++;
+            isAnimated = false;
+            this.canvas.remove();
+            this.canvas = false;
         });
-        scId++;
-        this.canvas.style.display = "none";
-        isAnimated = wasInAnim;
     })
 
     stop() {
@@ -184,6 +188,7 @@ class GameRender {
                 this.canvas.style.display = "none";
             }
         }
+        this.resize(true);
     }
 }
 
