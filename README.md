@@ -62,35 +62,35 @@ Can be used for a lot of stuff: video calls, video record, live stream ...
 - html
 
     ```html
-        <body>
-            <button id="start">Start Video Call</button>
-            <button id="stop" disabled>Stop Video Call</button>
-            <canvas id="videocall-canvas" style="display: none; position: absolute; width: 250px; height: 575px; right: 5px; bottom: 5px; border: solid 5px red;"></canvas>
+    <body>
+        <button id="start">Start Video Call</button>
+        <button id="stop" disabled>Stop Video Call</button>
+        <canvas id="videocall-canvas" style="display: none; position: absolute; width: 250px; height: 575px; right: 5px; bottom: 5px; border: solid 5px red;"></canvas>
 
-            <script type="module" src="nui://utk_render/script.js"></script>
-            <script src="index.js"></script>
-        </body>
+        <script type="module" src="nui://utk_render/script.js"></script>
+        <script src="index.js"></script>
+    </body>
     ```
 
 - index.js
 
     ```js
-        const startButton = document.getElementById("start");
-        const stopButton = document.getElementById("stop");
-        const canvas = document.getElementById("videocall-canvas");
+    const startButton = document.getElementById("start");
+    const stopButton = document.getElementById("stop");
+    const canvas = document.getElementById("videocall-canvas");
 
-        startButton.addEventListener("click", () => {
-            canvas.style.display = "block"
-            MainRender.renderToTarget(canvas);
-            stopButton.disabled = true;
-            startButton.disabled = false;
-        });
+    startButton.addEventListener("click", () => {
+        canvas.style.display = "block"
+        MainRender.renderToTarget(canvas);
+        stopButton.disabled = true;
+        startButton.disabled = false;
+    });
 
-        stopButton.addEventListener("click", () => {
-            MainRender.stop();
-            stopButton.disabled = false;
-            startButton.disabled = true;
-        });
+    stopButton.addEventListener("click", () => {
+        MainRender.stop();
+        stopButton.disabled = false;
+        startButton.disabled = true;
+    });
     ```
 
 ## Important Note
@@ -100,12 +100,11 @@ Realtime render was made for my own phone therefore, render width and height rat
 - script.js line:37 and line:97
 
     ```js
-        // this width is 10 / 23 which is 250 to 575
-        const width = Math.floor(window.innerHeight * 10 / 23);
+    // this width is 10 / 23 which is 250 to 575
+    const width = Math.floor(window.innerHeight * 10 / 23);
 
-        // 3rd parameter is left offset for the camera, setting it to 0 means most left side of the game, setting it to window.innerWidth / 2 means half of the game
-        cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth / 3.5, 0, width, window.innerHeight);
-
+    // 3rd parameter is left offset for the camera, setting it to 0 means most left side of the game, setting it to window.innerWidth / 2 means half of the game
+    cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth / 3.5, 0, width, window.innerHeight);
     ```
 
 To creat a functional video call script, you need to look into [WebRTC](https://webrtc.org/)
