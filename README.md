@@ -2,6 +2,8 @@
 
 [Original script](https://github.com/citizenfx/screenshot-basic) made by [citizenfx](https://github.com/citizenfx)
 
+[In-game streaming platform demonstration using utk_render](https://github.com/utkuali/utk_streamer)
+
 ## Installation
 
 - Put utk_render in your resource folder and start it like any other resource
@@ -107,4 +109,4 @@ Realtime render was made for my own phone therefore, render width and height rat
     cameraRTT.setViewOffset(window.innerWidth, window.innerHeight, window.innerWidth / 3.5, 0, width, window.innerHeight);
     ```
 
-To creat a functional video call script, you need to look into [WebRTC](https://webrtc.org/)
+To create a functional video call script, you need to look into [WebRTC](https://webrtc.org/)
