@@ -18,6 +18,10 @@
 <script type="module" src="nui://utk_render/script.js"></script>
 ```
 
+## Handling Screenshot Uploads
+
+To handle screenshot upload requests you can use this php code: https://github.com/melihozkara/fivem-php-img-uploader
+
 ### Functions
 
 #### Request Screenshot
