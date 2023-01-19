@@ -5,7 +5,7 @@ const uploadField = ""; //? default upload field
 
 //! CONFIG
 
-import {OrthographicCamera, Scene, WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat, UnsignedByteType, CfxTexture, ShaderMaterial, PlaneBufferGeometry, Mesh, WebGLRenderer} from "/module/Three.js";
+import { CfxTexture, LinearFilter, Mesh, NearestFilter, OrthographicCamera, PlaneBufferGeometry, RGBAFormat, Scene, ShaderMaterial, UnsignedByteType, WebGLRenderTarget, WebGLRenderer } from "/module/Three.js";
 
 var isAnimated = false;
 var MainRender;
@@ -149,7 +149,7 @@ class GameRender {
         isAnimated = true;
     }
 
-    requestScreenshot = (url, field) => new Promise((res) => {
+    requestScreenshot = (url, field) => new Promise(async (res) => {
         console.time("requestScreenshot");
         this.createTempCanvas();
         url = url ? url : uploadUrl;
