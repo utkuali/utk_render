@@ -11,6 +11,10 @@ var isAnimated = false;
 var MainRender;
 var scId = 0;
 
+function Delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // from https://stackoverflow.com/a/12300351
 function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(',')[1]);
